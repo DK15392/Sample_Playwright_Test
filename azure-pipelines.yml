@@ -10,12 +10,26 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: NodeTool@0
+- task: UseNode@1
   inputs:
     versionSpec: '20.x'
   displayName: 'Install Node.js'
 
 - script: |
-    npm install
+    npm ci
     npm run build
-  displayName: 'npm install and build'
+    npx playwright install --with-deps chromium
+  displayName: 'Install dependencies and build'
+
+- script: |
+    xvfb-run --auto-servernum npm test
+  displayName: 'Run headed Playwright tests'
+  continueOnError: true
+
+- task: PublishPipelineArtifact@1
+  condition: always()
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)/playwright-report'
+    artifact: 'playwright-report'
+    publishLocation: 'pipeline'
+  displayName: 'Publish Playwright HTML report'
