@@ -13,6 +13,10 @@ export class LoginPage {
 
   async goto(): Promise<void> {
     await this.page.goto('/');
+    await expect(this.page).toHaveTitle('Swag Labs');
+    await expect(this.usernameInput).toBeVisible();
+    await expect(this.passwordInput).toBeVisible();
+    await expect(this.loginButton).toBeEnabled();
   }
 
   async login(username: string, password: string): Promise<void> {
@@ -20,5 +24,7 @@ export class LoginPage {
     await this.passwordInput.fill(password);
     await this.loginButton.click();
     await expect(this.page).toHaveURL(/inventory\.html/);
+    await expect(this.page.locator('.title')).toHaveText('Products');
+    await expect(this.page.locator('.inventory_item')).toHaveCount(6);
   }
 }
