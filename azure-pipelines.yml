@@ -12,7 +12,7 @@ pool:
 steps:
 - task: UseNode@1
   inputs:
-    versionSpec: '20.x'
+    version: '20.x'
   displayName: 'Install Node.js'
 
 - script: |
@@ -22,8 +22,10 @@ steps:
   displayName: 'Install dependencies and build'
 
 - script: |
+    mkdir -p playwright-report
     xvfb-run --auto-servernum npm test
   displayName: 'Run headed Playwright tests'
+  condition: always()
   continueOnError: true
 
 - task: PublishPipelineArtifact@1
